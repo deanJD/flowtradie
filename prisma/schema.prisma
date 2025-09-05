@@ -1,0 +1,39 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  startDate   DateTime
+  endDate     DateTime
+  trades      Trade[]
+  tasks       Task[]
+  createdAt   DateTime @default(now())
+}
+
+model Trade {
+  id          String   @id @default(uuid())
+  name        String
+  license     String
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+  tasks       Task[]
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  status      String
+  trade       Trade?   @relation(fields: [tradeId], references: [id])
+  tradeId     String?
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+}
